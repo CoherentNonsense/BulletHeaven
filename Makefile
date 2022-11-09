@@ -1,4 +1,4 @@
-DIRS := *.c entities/*.c systems/*.c
+DIRS := *.c entities/*.c systems/*.c data/*.c
 CFILES := $(foreach DIR, $(DIRS), $(wildcard src/$(DIR)))
 OFILES := $(patsubst src/%.c, build/%.o, $(CFILES))
 
@@ -9,6 +9,7 @@ all: game
 init:
 	mkdir -p build
 	mkdir -p build/systems
+	mkdir -p build/data
 
 build/%.o: src/%.c
 	gcc -c $(INCLUDES) -Wall -o $@ $<

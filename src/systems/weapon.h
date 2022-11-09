@@ -3,8 +3,6 @@
 
 #include "../game_data.h"
 
-void system_weapon(struct GameData* data) {
-    
-}
+void system_weapon(struct GameData* data);    
 
 #endif

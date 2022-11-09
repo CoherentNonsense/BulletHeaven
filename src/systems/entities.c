@@ -14,7 +14,7 @@ void system_move_entities(struct GameData* data) {
   vec2 friction;
   for (int i = 0; i < MAX_ENTITIES; ++i) {
     struct Entity* entity = &data->entities.entities[i];
-    if (!entity_get_flags(entity, ENTITY_FLAG_ACTIVE)) {
+    if (!entity_flag_get(entity, ENTITY_FLAG_ACTIVE)) {
       continue;
     }
 
@@ -29,27 +29,14 @@ void system_entities_collide(struct GameData* data) {
   vec2 repulsion;
   for (int i = 0; i < MAX_ENTITIES; ++i) {
     struct Entity* entity = &data->entities.entities[i];
-    if (!entity_get_flags(entity, ENTITY_FLAG_ACTIVE)) {
+    if (!entity_flag_get(entity, ENTITY_FLAG_ACTIVE | ENTITY_FLAG_RIGID_BODY)) {
       continue;
     }
-    
-    if (!entity_get_flags(entity, ENTITY_FLAG_COLLISION)) {
-      continue;
-    }
-    
-    struct Entity* player = get_entity_data(&data->entities, data->player_id);
-    if (!entity_in_view(player, entity)) {
-      continue;
-    }
-
+        
     glm_vec2_copy((vec2){0.0f, 0.0f}, repulsion);
     for (int j = 0; j < MAX_ENTITIES; ++j) {
       struct Entity* other = &data->entities.entities[j];
-      if (!entity_get_flags(other, ENTITY_FLAG_ACTIVE)) {
-        continue;
-      }
-
-      if (!entity_get_flags(other, ENTITY_FLAG_COLLISION)) {
+      if (!entity_flag_get(other, ENTITY_FLAG_ACTIVE | ENTITY_FLAG_RIGID_BODY)) {
         continue;
       }
 
@@ -70,10 +57,10 @@ void system_entities_collide(struct GameData* data) {
 }
 
 void system_draw_entities(struct GameData* data) {
-  struct Entity* player = get_entity_data(&data->entities, data->player_id);
+  struct Entity* player = entity_pool_get(&data->entities, data->player_id);
   for (int i = 0; i < MAX_ENTITIES; ++i) {
     struct Entity* entity = &data->entities.entities[i];
-    if (!entity_get_flags(entity, ENTITY_FLAG_ACTIVE) || !entity_in_view(player, entity)) {
+    if (!entity_flag_get(entity, ENTITY_FLAG_ACTIVE) || !entity_in_view(player, entity)) {
       continue;
     }
 

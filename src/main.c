@@ -42,7 +42,7 @@ void system_debug(struct GameData* data) {
     return;
   }
   
-  struct Entity* player = get_entity_data(&data->entities, data->player_id);
+  struct Entity* player = entity_pool_get(&data->entities, data->player_id);
   
   char buffer[50];
   sprintf(buffer, "POS: (%.2f, %.2f)", player->position[0], player->position[1]);
@@ -57,7 +57,7 @@ void system_debug(struct GameData* data) {
   draw_text((vec2){-230.0f, -130.0f}, buffer);
   sprintf(buffer, "TIME: %.2f", data->time);
   draw_text((vec2){-230.0f, -110.0f}, buffer);
-  sprintf(buffer, "ENT: %d", data->entities.entities_count);
+  sprintf(buffer, "ENT: %d", data->entities.count);
   draw_text((vec2){-230.0f, -100.0f}, buffer);
 }
 
@@ -74,13 +74,13 @@ int main() {
   game_data->camera = synge_camera_new(game_size);
   game_data->ui_camera = synge_camera_new(game_size);
     
-  game_data->player_id = create_entity(&game_data->entities);
-  struct Entity* player = get_entity_data(&game_data->entities, game_data->player_id);
-  player->size = 4.0f;
+  game_data->player_id = entity_pool_add(&game_data->entities);
+  struct Entity* player = entity_pool_get(&game_data->entities, game_data->player_id);
+  player->size = 2.0f;
   player->weight = 1.0f;
   player->uv_index = 0.0f;
   player->rotation = 0.0f;
-  entity_set_flags(player, ENTITY_FLAG_COLLISION);
+  entity_flag_set(player, ENTITY_FLAG_RIGID_BODY);
   glm_vec2_copy(GLM_VEC2_ZERO, player->position);
   glm_vec2_copy(GLM_VEC2_ZERO, player->velocity);
 
@@ -95,7 +95,7 @@ int main() {
     game_data->tick += 1;
     
     system_player_move(game_data);
-    system_player_attack(game_data);
+    system_weapon(game_data);
     system_enemy_spawn(game_data);
     system_enemy_move(game_data);
     system_move_entities(game_data);
