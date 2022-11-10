@@ -6,6 +6,16 @@ INCLUDES = -I/usr/local/include -I./libs/glad/include -I./libs/cglm/include -I./
 
 all: game
 
+ifeq ($(OS), Windows_NT)
+
+build/%.o: src/%.c
+	gcc -c $(INCLUDES) -IC:/MinGW/include -Wall -o $@ $<
+
+game: $(OFILES)
+	gcc -o game.exe $(OFILES) -LC:/MinGW/lib -lsynge -lglfw3 -lgdi32 -lopengl32
+
+else
+
 init:
 	mkdir -p build
 	mkdir -p build/systems
@@ -19,3 +29,5 @@ game: init $(OFILES)
 	
 clean:
 	rm -r build game
+
+endif
